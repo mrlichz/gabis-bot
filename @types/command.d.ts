@@ -1,4 +1,5 @@
-import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js'
+import { Player } from 'discord-player'
+import { CacheType, ChatInputCommandInteraction, Client, SlashCommandBuilder } from 'discord.js'
 
 declare global {	
 	interface TCommand {

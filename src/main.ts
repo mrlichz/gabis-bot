@@ -2,8 +2,9 @@ import cluster from 'node:cluster'
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js'
+import { Client, Events, GatewayIntentBits, REST, Routes, VideoQualityMode } from 'discord.js'
 import 'dotenv/config'
+import { Player } from 'discord-player'
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? ''
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? ''
@@ -31,9 +32,21 @@ function main() {
 async function setupDiscord() {
 	const commands: TCommand[] = []
 	const client = new Client({
-		intents: [GatewayIntentBits.Guilds],
+		intents: [
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.Guilds
+		],
 		closeTimeout: 100000
 	})
+
+	const player = new Player(client, {
+		ytdlOptions: {
+			quality: 'highestaudio',
+			highWaterMark: 1 << 25,
+		}
+	})
+	await player.extractors.loadDefault(e => e === 'YouTubeExtractor')
 
 	const foldersPath = path.join(__dirname, 'commands')
 	const commandFolders = fs.readdirSync(foldersPath)
