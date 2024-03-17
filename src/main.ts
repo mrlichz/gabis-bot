@@ -1,12 +1,31 @@
+import cluster from 'node:cluster'
 import fs from 'node:fs'
 import path from 'node:path'
 
 import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js'
 import 'dotenv/config'
 
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? ''
+const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? ''
+const WORKERS = +(process.env.WORKERS ?? '2')
 
 function main() {
-	setupDiscord()
+	if (cluster.isPrimary) {
+		for (let i = 0; i < WORKERS; i++) {
+			cluster.fork()
+		}
+
+		cluster.on('exit', (worker, code, _signal) => {
+			console.error(`Worker ${worker.process.pid} died with code ${code}`)
+
+			const newWorker = cluster.fork()
+			console.log(`A new worker started, pid ${newWorker.process.pid}`)
+		})
+
+		console.log(`${WORKERS} workers started`)
+	} else {
+		setupDiscord()
+	}
 }
 
 async function setupDiscord() {
@@ -71,10 +90,10 @@ async function setupDiscord() {
 		}
 	})
 	
-	client.login(process.env.DISCORD_TOKEN)
+	client.login(DISCORD_TOKEN)
 	
 	{
-		const rest = new REST().setToken(process.env.DISCORD_TOKEN ?? '')
+		const rest = new REST().setToken(DISCORD_TOKEN)
 		
 		if (process.argv.includes('delete')) {
 			await deleteCommands(rest)
@@ -88,7 +107,7 @@ async function setupDiscord() {
 
 async function deleteCommands(rest: REST) {
 	try {
-		await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID ?? ''), {
+		await rest.put(Routes.applicationCommands(DISCORD_CLIENT_ID), {
 			body: []
 		})
 		console.log('Successfully deleted all application commands.')
@@ -103,7 +122,7 @@ async function syncCommands(rest: REST, commands: TCommand[]) {
 
 		const data: any = await rest.put(
 			Routes.applicationCommands(
-				process.env.DISCORD_CLIENT_ID ?? '',
+				DISCORD_CLIENT_ID,
 			),
 			{
 				body: [...commands.map(e => e.data)]
