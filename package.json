@@ -1,18 +1,21 @@
 {
 	"name": "gabedo-bot",
 	"version": "1.0.0",
-	"main": "main.ts",
+	"main": "./src/main.ts",
 	"scripts": {
-		"start": "tsc main.ts",
-		"register": "tsc register.ts",
+		"start": "tsup-node ./src/* && node ./dist/main.cjs",
+		"register": "node ./register.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"type": "module",
 	"dependencies": {
-		"discord.js": "^14.14.1",
+		"discord.js": "^14.12.1",
 		"dotenv": "^16.4.5"
 	},
-	"devDependencies": {},
+	"devDependencies": {
+		"tsup": "^8.0.2",
+		"typescript": "^5.4.2"
+	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
