@@ -5,6 +5,8 @@ export const data = new SlashCommandBuilder()
 	.setDescription('test')
 
 export default async (interaction: TCommandInteraction) => {
-	await new Promise(res => setTimeout(res, 2000))	
-	await interaction.reply(`Delayed`)
+	await interaction.deferReply({ephemeral: true});
+	await new Promise(res => setTimeout(res, 3000))	
+	await interaction.editReply('Delayed');
+	await interaction.followUp({content: 'hell yeah', ephemeral: true});
 }

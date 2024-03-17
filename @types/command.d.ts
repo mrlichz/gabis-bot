@@ -3,6 +3,7 @@ import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from 'dis
 declare global {	
 	interface TCommand {
 		data: SlashCommandBuilder
+		cooldown?: number
 		fn: (interaction: TCommandInteraction) => Promise<void>
 	}
 

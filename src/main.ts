@@ -11,7 +11,7 @@ const WORKERS = +(process.env.WORKERS ?? '2')
 
 function main() {
 	if (cluster.isPrimary) {
-		for (let i = 0; i < WORKERS; i++) {
+		for (let i = WORKERS; i > 0; i--) {
 			cluster.fork()
 		}
 
