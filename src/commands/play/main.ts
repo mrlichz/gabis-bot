@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { useMainPlayer } from 'discord-player'
+import { EmbedBuilder } from 'discord.js'
 
 
 export const data = new SlashCommandBuilder()
@@ -34,7 +35,17 @@ export default async (interaction: TCommandInteraction) => {
 			}
 		})
 
-		return interaction.followUp(`**${track.title}** enqueued!`)
+		const embed = new EmbedBuilder()
+			.setTitle(track.title)
+			.setURL(track.url)
+			.setThumbnail(track.thumbnail)
+			.setAuthor({
+				name: track.author
+			})
+			.setColor('DarkOrange')
+		;
+
+		return interaction.followUp({ embeds: [embed] })
 	} catch (err) {
 		return interaction.followUp(`Something went wrong: ${err}`)
 	}
