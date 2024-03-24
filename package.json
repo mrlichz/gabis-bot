@@ -4,6 +4,7 @@
 	"main": "./src/main.ts",
 	"scripts": {
 		"start": "tsup-node ./src/* && node ./dist/main.cjs",
+		"build": "tsup-node ./src/*",
 		"register": "node ./register.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
