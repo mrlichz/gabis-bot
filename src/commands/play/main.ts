@@ -22,7 +22,10 @@ export default async (interaction: TCommandInteraction) => {
 	const channel = user?.voice.channelId
 
 	if (!channel) {
-		return interaction.reply('You are not connected to a voice channel!')
+		return interaction.reply({
+			content: 'You are not connected to a voice channel!',
+			ephemeral: true
+		})
 	}
 	const query = interaction.options.getString('query', true)
 
