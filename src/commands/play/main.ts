@@ -42,6 +42,7 @@ export default async (interaction: TCommandInteraction) => {
 			.setTitle(track.title)
 			.setURL(track.url)
 			.setThumbnail(track.thumbnail)
+			.setTimestamp(new Date())
 			.setAuthor({
 				name: track.author
 			})
