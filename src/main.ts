@@ -1,32 +1,15 @@
-import cluster from 'node:cluster'
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { Client, Events, GatewayIntentBits, REST, Routes, VideoQualityMode } from 'discord.js'
-import 'dotenv/config'
+import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js'
 import { Player } from 'discord-player'
+import 'dotenv/config'
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN ?? ''
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? ''
-const WORKERS = +(process.env.WORKERS ?? '2')
 
 function main() {
-	if (cluster.isPrimary) {
-		for (let i = WORKERS; i > 0; i--) {
-			cluster.fork()
-		}
-
-		cluster.on('exit', (worker, code, _signal) => {
-			console.error(`Worker ${worker.process.pid} died with code ${code}`)
-
-			const newWorker = cluster.fork()
-			console.log(`A new worker started, pid ${newWorker.process.pid}`)
-		})
-
-		console.log(`${WORKERS} workers started`)
-	} else {
-		setupDiscord()
-	}
+	setupDiscord()
 }
 
 async function setupDiscord() {
@@ -70,7 +53,7 @@ async function setupDiscord() {
 	}
 
 	client.once(Events.ClientReady, readyClient => {
-		//console.log(`Ready! Logged in as ${readyClient.user.tag}`)
+		console.log(`Ready! Logged in as ${readyClient.user.tag}`)
 	})
 
 	client.on(Events.InteractionCreate, async interaction => {
